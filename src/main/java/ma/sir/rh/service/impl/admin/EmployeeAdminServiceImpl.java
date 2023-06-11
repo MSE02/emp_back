@@ -27,6 +27,21 @@ public class EmployeeAdminServiceImpl extends AbstractServiceImpl<Employee, Empl
 
 
     private final JavaMailSenderImpl mailSender;
+    @Autowired
+    private AbsenceAdminService absenceService;
+    @Autowired
+    private CongeAdminService congeService;
+    @Autowired
+    private ContratAdminService contratService;
+    @Autowired
+    private PointageAdminService pointageService;
+    @Autowired
+    private PayementSalaireAdminService payementSalaireAdminService;
+
+    public EmployeeAdminServiceImpl(EmployeeDao dao, EmployeeHistoryDao historyDao, JavaMailSenderImpl mailSender) {
+        super(dao, historyDao);
+        this.mailSender = mailSender;
+    }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = false)
     public Employee create(Employee t) {
@@ -66,8 +81,8 @@ public class EmployeeAdminServiceImpl extends AbstractServiceImpl<Employee, Empl
     void sendEmail(Employee employee) {
         if (findByCode(employee.getCode()) != null) {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            String body = "Dear " + employee.getNom() + " " + employee.getPrenom() + "." + "\n\nThis is to inform you that you have been absent for "+calculateDaysAbsent(employee)+" days.\n\nPlease contact your supervisor or manager for further assistance.\n\nBest regards,\nThe HR Team";
-            String subject = "Absence Notification";
+            String body = "Cher " + employee.getNom() + " " + employee.getPrenom() + "." + "\n\nNous vous informons que vous êtes absent depuis "+calculateDaysAbsent(employee)+" jours.\n\nVeuillez contacter votre superviseur ou votre responsable pour toute assistance supplémentaire.\n\nCordialement,\nL'équipe des Ressources Humaines";
+            String subject = "Notification d'absence";
             simpleMailMessage.setFrom("moha2000mse@gmail.com");
             simpleMailMessage.setText(body);
             simpleMailMessage.setSubject(subject);
@@ -81,13 +96,13 @@ public class EmployeeAdminServiceImpl extends AbstractServiceImpl<Employee, Empl
         List<Absence> absences = employee.getAbsences();
         if (absences != null && !absences.isEmpty()) {
             for (Absence absence : absences) {
-                days += absence.getDuree();
+                if (absence.getDateFinA() == null) {
+                    days += absence.getDuree();
+                }
             }
         }
         return days;
     }
-
-
 
     public Employee findWithAssociatedLists(Long id) {
         Employee result = dao.findById(id).orElse(null);
@@ -102,8 +117,10 @@ public class EmployeeAdminServiceImpl extends AbstractServiceImpl<Employee, Empl
     public void deleteAssociatedLists(Long id) {
         absenceService.deleteByEmployeeId(id);
         congeService.deleteByEmployeeId(id);
+        contratService.deleteByEmployeeId(id);
+        pointageService.deleteByEmployeeId(id);
+        payementSalaireAdminService.deleteByEmployeeId(id);
     }
-
 
     public void updateWithAssociatedLists(Employee employee) {
         if (employee != null && employee.getId() != null) {
@@ -150,26 +167,8 @@ public class EmployeeAdminServiceImpl extends AbstractServiceImpl<Employee, Empl
         return dao.deleteByCategorieEmployeeId(id);
     }
 
-
     public void configure() {
         super.configure(Employee.class, EmployeeHistory.class, EmployeeHistoryCriteria.class, EmployeeSpecification.class);
-    }
-
-    @Autowired
-    private UniteAdministrativeAdminService uniteAdministrativeService;
-    @Autowired
-    private CategorieEmployeeAdminService categorieEmployeeService;
-    @Autowired
-    private AbsenceAdminService absenceService;
-    @Autowired
-    private CongeAdminService congeService;
-    @Autowired
-    private ContratAdminService contratService;
-    ;
-
-    public EmployeeAdminServiceImpl(EmployeeDao dao, EmployeeHistoryDao historyDao, JavaMailSenderImpl mailSender) {
-        super(dao, historyDao);
-        this.mailSender = mailSender;
     }
 
 }

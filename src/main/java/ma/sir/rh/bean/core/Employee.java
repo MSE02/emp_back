@@ -7,6 +7,7 @@ import ma.sir.rh.zynerator.audit.AuditBusinessObject;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 
@@ -151,8 +152,29 @@ public class Employee extends AuditBusinessObject {
     }
 
     public BigDecimal getSoldeConge() {
-        return this.soldeConge;
+        if (this.contrat == null) {
+            return BigDecimal.valueOf(0);
+        } else {
+            LocalDateTime anneeTravail = this.contrat.getDateContrat();
+            LocalDateTime anneeActuel = LocalDateTime.now();
+            int anneesAnciennete = Period.between(anneeTravail.toLocalDate(), anneeActuel.toLocalDate()).getYears()+1;
+
+            if (anneesAnciennete >= 1 && anneesAnciennete <= 3) {
+                return BigDecimal.valueOf(20);
+            } else if (anneesAnciennete >= 4 && anneesAnciennete <= 6) {
+                return BigDecimal.valueOf(23);
+            } else if (anneesAnciennete >= 7 && anneesAnciennete <= 10) {
+                return BigDecimal.valueOf(26);
+            } else if (anneesAnciennete >= 11 && anneesAnciennete <= 15) {
+                return BigDecimal.valueOf(29);
+            } else if (anneesAnciennete > 15) {
+                return BigDecimal.valueOf(32);
+            } else {
+                return BigDecimal.ZERO;
+            }
+        }
     }
+
 
     public void setSoldeConge(BigDecimal soldeConge) {
         this.soldeConge = soldeConge;
