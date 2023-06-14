@@ -5,7 +5,6 @@ import ma.sir.rh.bean.core.Pointage;
 import ma.sir.rh.bean.history.PointageHistory;
 import ma.sir.rh.dao.criteria.core.PointageCriteria;
 import ma.sir.rh.dao.criteria.history.PointageHistoryCriteria;
-import ma.sir.rh.dao.facade.core.EmployeeDao;
 import ma.sir.rh.dao.facade.core.PointageDao;
 import ma.sir.rh.dao.facade.history.PointageHistoryDao;
 import ma.sir.rh.dao.specification.core.PointageSpecification;
@@ -14,9 +13,10 @@ import ma.sir.rh.zynerator.service.AbstractServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -25,8 +25,8 @@ public class PointageAdminServiceImpl extends AbstractServiceImpl<Pointage, Poin
 
 
     @Autowired
-    private EmployeeDao employeeService;
-     // Variable de classe pour stocker la liste
+    private EmployeeAdminServiceImpl employeeService;
+    private List<Employee> employeesWithNoPointage; // Variable de classe pour stocker la liste
     private LocalDate currentDate; // Variable de classe pour stocker la date actuelle
 
     public PointageAdminServiceImpl(PointageDao dao, PointageHistoryDao historyDao) {
@@ -48,12 +48,13 @@ public class PointageAdminServiceImpl extends AbstractServiceImpl<Pointage, Poin
     @Override
     public List<Employee> getEmployeesWithNoPointage() {
         LocalDate today = LocalDate.now();
-        List<Employee> employeesWithNoPointage = new ArrayList<>();
+
+        // Vérifier si la date actuelle est différente de la date stockée
         if (employeesWithNoPointage == null || !today.equals(currentDate)) {
             employeesWithNoPointage = new ArrayList<>();
             currentDate = today;
         } else {
-            employeesWithNoPointage.clear();
+            employeesWithNoPointage.clear(); // Vider la liste existante
         }
 
         List<Employee> allEmployees = employeeService.findAll();
@@ -74,10 +75,10 @@ public class PointageAdminServiceImpl extends AbstractServiceImpl<Pointage, Poin
             LocalDateTime heureArrive = pointage.getHeureArrive();
             LocalDate pointageDate = heureArrive.toLocalDate();
             if (pointageDate.equals(today)) {
-                return true;
+                return true; // Un pointage a été enregistré pour aujourd'hui
             }
         }
-        return false;
+        return false; // Aucun pointage enregistré pour aujourd'hui
     }
 
     public void configure() {

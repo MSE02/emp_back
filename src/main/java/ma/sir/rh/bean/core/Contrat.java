@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 
@@ -31,7 +33,7 @@ public class Contrat   extends AuditBusinessObject     {
     private LocalDateTime dateContrat ;
     @Column(length = 500)
     private String description;
-
+    @JsonBackReference
     private Employee employee ;
     
     private TypeContrat typeContrat ;

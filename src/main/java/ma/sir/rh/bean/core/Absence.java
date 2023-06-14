@@ -1,5 +1,6 @@
 package ma.sir.rh.bean.core;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ma.sir.rh.zynerator.audit.AuditBusinessObject;
 
@@ -24,7 +25,7 @@ public class Absence extends AuditBusinessObject {
     private String description;
     private Integer duree = 0;
     private TypeAbsence typeAbsence;
-
+    @JsonBackReference
     private Employee employee;
 
 

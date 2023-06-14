@@ -81,7 +81,7 @@ public class EmployeeAdminServiceImpl extends AbstractServiceImpl<Employee, Empl
     void sendEmail(Employee employee) {
         if (findByCode(employee.getCode()) != null) {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-            String body = "Cher " + employee.getNom() + " " + employee.getPrenom() + "." + "\n\nNous vous informons que vous êtes absent depuis "+calculateDaysAbsent(employee)+" jours.\n\nVeuillez contacter votre superviseur ou votre responsable pour toute assistance supplémentaire.\n\nCordialement,\nL'équipe des Ressources Humaines";
+            String body = "Cher " + employee.getNom() + " " + employee.getPrenom() + "." + "\n\nNous vous informons que vous êtes absent depuis plus que 3 jours.\n\nVeuillez contacter votre superviseur ou votre responsable pour toute assistance supplémentaire.\n\nCordialement,\nL'équipe des Ressources Humaines";
             String subject = "Notification d'absence";
             simpleMailMessage.setFrom("moha2000mse@gmail.com");
             simpleMailMessage.setText(body);

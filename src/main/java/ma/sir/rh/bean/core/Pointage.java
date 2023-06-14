@@ -1,5 +1,6 @@
 package ma.sir.rh.bean.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ma.sir.rh.zynerator.audit.AuditBusinessObject;
 
@@ -23,7 +24,7 @@ public class Pointage extends AuditBusinessObject {
     private LocalDateTime heureArrive;
     private LocalDateTime heureSortie;
     private Integer tempsRetard = 0;
-
+    @JsonIgnore
     private Employee employee;
 
 
@@ -89,7 +90,7 @@ public class Pointage extends AuditBusinessObject {
     public void setTempsRetard(Integer tempsRetard) {
         this.tempsRetard = tempsRetard;
     }
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     public Employee getEmployee() {
         return this.employee;
@@ -119,4 +120,3 @@ public class Pointage extends AuditBusinessObject {
     }
 
 }
-
